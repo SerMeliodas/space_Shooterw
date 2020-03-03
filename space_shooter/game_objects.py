@@ -30,13 +30,23 @@ class Enemy(pygame.sprite.Sprite):
     def update(self):
         self.rect.move_ip(0,SPEED-2)
         self.bullet_enemy_colysion()
+        self.health_update()
         self.enemy_player_colision()
     def bullet_enemy_colysion(self):
-        for colision in pygame.sprite.groupcollide(self.bullets,
-                                                    self.enemys,
-                                                    True,False):
-            if colision:
-                self.health_point -= 1
+        for enemy in self.enemys:
+            x = enemy.rect.x + enemy.rect.width/3, (enemy.rect.x + enemy.rect.width) - enemy.rect.width / 3
+            y = enemy.rect.y + enemy.rect.height
+            x1 = enemy.rect.x, enemy.rect.x + enemy.rect.width
+            y1 = enemy.rect.y + 5
+            for bullet in self.bullets:
+                bullet_x = bullet.rect.x + bullet.rect.width / 2
+                if bullet_x > x[0] and bullet_x < x[1] and bullet.rect.y < y:
+                    self.bullets.remove(bullet)
+                    self.health_point -= 1 
+                if bullet_x > x1[0] and bullet_x < x1[1] and bullet.rect.y < y1:
+                    self.bullets.remove(bullet)
+                    self.health_point -= 1 
+    def health_update(self):
         for enemy in list(self.enemys):
             if enemy.health_point == 0:
                 self.enemys.remove(enemy)
@@ -91,10 +101,6 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottom += SPEED
 
         self.shooting()
-        self.score_counter()
-    def score_counter(self):
-        self.text = self.font.render(f'{self.score}',True,(255,255,255))
-        self.window.blit(self.text,(WIDTH,20))
     def shooting(self):
         if self.current_couldown <= 0:
             self.bullets.add(Bullet(self.rect.midtop))

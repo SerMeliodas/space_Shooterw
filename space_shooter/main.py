@@ -47,9 +47,9 @@ if __name__ == '__main__':
         main_objects.update()
 
         main_objects.draw(window)
+        bullets.draw(window)
         enemys.draw(window)
         healthbar.draw(window)
-        bullets.draw(window)
         restart_menu.update()
         pygame.display.update()
         player.score += 1
