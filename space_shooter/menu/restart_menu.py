@@ -8,17 +8,26 @@ class MenuButton(object):
         self.image = pygame.image.load('assets/menu/restart_button.png')
         self.image = pygame.transform.scale(self.image,(self.image.get_width()*5,
                                                         self.image.get_height()*5
-                                                                ))
+                                                        ))
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH / 2
         self.rect.centery = HEIGHT / 2
+class SaveButton(object):
+    def __init__(self):
+        super(SaveButton,self).__init__()
+        self.image = pygame.image.load('assets/menu/save_button.png')
+        self.image = pygame.transform.scale(self.image,(self.image.get_width()*5,
+                                                        self.image.get_height()*5
+                                                        ))
+        self.rect = self.image.get_rect()
 class Menu(pygame.sprite.Sprite):
-    def __init__(self,window,MenuButton,player,enemys):
+    def __init__(self,window,MenuButton,player,enemys,score):
         super(Menu,self).__init__()
         self.window = window
         self.player = player
         self.MenuButton = MenuButton
         self.enemys = enemys
+        self.score = score
     def update(self):
         if self.player.health_point <= 0:
             run = True
@@ -35,6 +44,7 @@ class Menu(pygame.sprite.Sprite):
                                 self.player.rect.bottom = HEIGHT
                                 self.enemys.remove(list(self.enemys))
                                 self.player.health_point = 6
+                                self.score.score = 0
                                 run = False
                 self.window.blit(self.MenuButton.image,self.MenuButton.rect)
                 pygame.display.update()

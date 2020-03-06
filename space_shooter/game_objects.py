@@ -14,7 +14,7 @@ class Bullet(pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite):
     spawn_couldown = 1000
     current_couldown = 0
-    def __init__(self,bullets,enemys,player):
+    def __init__(self,bullets,enemys,player,score):
         super(Enemy,self).__init__()
         self.image = pygame.image.load('assets/enemy.png')
         self.image = pygame.transform.scale(self.image,(self.image.get_width()*2,
@@ -25,6 +25,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.y = random.randint(-50,-10)
         self.bullets = bullets
         self.enemys = enemys
+        self.score = score
         self.player = player
         self.health_point = 2
     def update(self):
@@ -50,15 +51,16 @@ class Enemy(pygame.sprite.Sprite):
         for enemy in list(self.enemys):
             if enemy.health_point == 0:
                 self.enemys.remove(enemy)
+                self.score.score += 5
     def enemy_player_colision(self):
         colision = pygame.sprite.spritecollide(self.player,self.enemys,True)
         if colision:
             self.player.health_point -= 1
 
     @staticmethod
-    def spawn(clock,bullets,enemys,player):
+    def spawn(clock,bullets,enemys,player,score):
         if Enemy.current_couldown <= 0:
-            enemys.add(Enemy(bullets,enemys,player))
+            enemys.add(Enemy(bullets,enemys,player,score))
             Enemy.current_couldown = Enemy.spawn_couldown
         else:
             Enemy.current_couldown -= clock.get_time()
@@ -71,7 +73,6 @@ class Player(pygame.sprite.Sprite):
     def __init__(self,window,name,enemys,bullets,clock):
         super(Player,self).__init__()
         self.health_point = 6
-        self.font = pygame.font.Font('assets/fonts/main_font.ttf',20)
         self.image = pygame.image.load('assets/main.png')
         self.image = pygame.transform.scale(self.image,(self.image.get_width()*3,
                                                         self.image.get_height()*3))
@@ -82,7 +83,6 @@ class Player(pygame.sprite.Sprite):
         self.clock = clock
         self.bullets = bullets
         self.enemys = enemys
-        self.score = 0
         self.window = window
         self.shoot_couldown = 480
         self.current_couldown = 0
@@ -155,3 +155,23 @@ class Background(pygame.sprite.Sprite):
         self.rect.bottom += SPEED
         if self.rect.bottom >= self.rect.height:
             self.rect.bottom = HEIGHT
+class Score():
+    def __init__(self,player,window):
+        super(Score,self).__init__()
+        self.score = 0
+        self.current_couldown = 0
+        self.couldown = 300
+        self.window = window
+        self.player = player
+        self.font = pygame.font.Font('assets/fonts/main_font.ttf',20)
+    def update(self,clock):
+        if self.current_couldown <= 0:
+            self.score += 1
+            self.current_couldown = self.couldown
+        else:
+            self.current_couldown -= clock.get_time()
+
+    def draw(self):
+        s = self.font.render(f"{self.score}",True,(255,255,255))
+        self.window.blit(s,(WIDTH - 100,20))
+

@@ -2,7 +2,7 @@ from settings import *
 import sys
 import pygame
 
-from game_objects import Player, Background, Bullet, Enemy, HealthBar, HealthBarBackground
+from game_objects import Player, Background, Bullet, Enemy, HealthBar, HealthBarBackground,Score
 from menu.restart_menu import Menu,MenuButton
 from menu.main_menu import MainMenu,PlayButton,ExitButton,ScoreButton,SettingsButton
 
@@ -19,6 +19,7 @@ main_menu = pygame.sprite.Group()
 
 player = Player(window,'DeminD',enemys,bullets,clock)
 background = Background()
+score = Score(player,window)
 
 pygame.display.set_caption(f'{player.name}')
 
@@ -26,7 +27,7 @@ main_objects.add(background)
 main_objects.add(player)
 healthbar.add(HealthBarBackground(player))
 healthbar.add(HealthBar())
-restart_menu.add(Menu(window,MenuButton(),player,enemys))
+restart_menu.add(Menu(window,MenuButton(),player,enemys,score))
 main_menu.add(MainMenu(window,ExitButton(),PlayButton(),SettingsButton(),ScoreButton()))
 
 if __name__ == '__main__':
@@ -39,17 +40,18 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
                 sys.exit()
 
-        Enemy.spawn(clock,bullets,enemys,player)
+        Enemy.spawn(clock,bullets,enemys,player,score)
 
         bullets.update()
         enemys.update()
         healthbar.update()
         main_objects.update()
+        score.update(clock)
 
         main_objects.draw(window)
         bullets.draw(window)
         enemys.draw(window)
         healthbar.draw(window)
+        score.draw()
         restart_menu.update()
         pygame.display.update()
-        player.score += 1
