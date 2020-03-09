@@ -2,12 +2,14 @@ from settings import *
 import sys
 import pygame
 
+from pygame.locals import *
 from game_objects import Player, Background, Bullet, Enemy, HealthBar, HealthBarBackground,Score
-from menu.restart_menu import Menu,MenuButton
+from menu.restart_menu import Menu,MenuButton,SaveButton
 from menu.main_menu import MainMenu,PlayButton,ExitButton,ScoreButton,SettingsButton
 
+flags = DOUBLEBUF
 pygame.init()
-window = pygame.display.set_mode(SIZE)
+window = pygame.display.set_mode(SIZE,flags)
 clock = pygame.time.Clock()
 
 bullets = pygame.sprite.Group()
@@ -27,7 +29,7 @@ main_objects.add(background)
 main_objects.add(player)
 healthbar.add(HealthBarBackground(player))
 healthbar.add(HealthBar())
-restart_menu.add(Menu(window,MenuButton(),player,enemys,score))
+restart_menu.add(Menu(window,MenuButton(),SaveButton(),player,enemys,score))
 main_menu.add(MainMenu(window,ExitButton(),PlayButton(),SettingsButton(),ScoreButton()))
 
 if __name__ == '__main__':
